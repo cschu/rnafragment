@@ -1,0 +1,48 @@
+public static void writePseudoknotFragment( String fname, StructureGraph g, int index ) {
+		
+		try {
+			
+			PrintWriter fout =
+				new PrintWriter( new BufferedWriter( new FileWriter( fname + ".P" + index + ".fragment" ) ) );
+			
+			PseudoknotMotif motif = g.getPknots().get( index );
+			ArrayList < Integer > chains = motif.getChainIndices();
+			Collections.sort( chains );
+			ArrayList < BaseContact > contacts = new ArrayList < BaseContact > ();
+			ArrayList < StemMotif > helices = new ArrayList < StemMotif > ();
+			
+			int nsstr = 0;
+			int ntstr = 0;
+			
+			for ( StemMotif h : motif.getHelices() ) {
+				
+				nsstr += h.basePairs.size();
+				ntstr += h.noncanonicalContacts.size();
+				contacts.addAll( h.basePairs );
+				contacts.addAll( h.noncanonicalContacts );
+				
+			}
+			
+			String strucs = g.getFragmentStructures( chains );
+			ArrayList < Base > bases = g.getBaseSubset( chains );	
+			
+			writeData( fout, 
+					   g.getIdString() + ".P" + index, 
+					   "PSEUDOKNOT", 
+					   chains, 
+					   strucs.substring( 0, strucs.indexOf( '&' ) ),
+					   strucs.substring( strucs.indexOf( '&' ) + 1 ),					   
+					   contacts, 
+					   nsstr, 
+					   ntstr, 
+					   helices,
+					   bases,
+					   new ArrayList < String > (),
+					   new ArrayList < Base > () );
+			
+			
+			fout.close();
+			
+		} catch ( IOException e) { e.printStackTrace(); }
+		
+	}
